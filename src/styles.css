@@ -1247,7 +1247,8 @@ body {
   justify-content: space-between;
   gap: 14px;
   margin-bottom: 16px;
-  min-height: 0;
+  position: relative;
+  height: 24px;
 }
 
 .mb-builder.is-mobile-layout .mb-side-title {
@@ -1286,9 +1287,13 @@ body {
   display: inline-flex;
   min-width: 161px;
   justify-content: center;
+  position: absolute;
+  right: 0;
+  top: -16px;
+  height: 48px;
   padding-block: 2px;
   padding-inline: 14px;
-  margin-top: -10px;
+  margin-top: 0;
 }
 
 .mb-builder.is-mobile-layout .mb-reset-link-overlay {
@@ -1707,6 +1712,8 @@ body {
     justify-content: space-between;
     gap: 14px;
     margin-bottom: 16px;
+    position: relative;
+    height: 40px;
   }
 
   .mb-side-head-right {
@@ -1737,6 +1744,11 @@ body {
     display: inline-flex;
     min-width: 230px;
     justify-content: center;
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 48px;
+    padding-block: 8px;
   }
 
   .mb-reset-link-overlay {
