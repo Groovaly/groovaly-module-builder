@@ -4,7 +4,7 @@ Static React, TypeScript and Vite application for composing Golden Age furniture
 
 ## Current work
 
-`main` contains Golden Age Builder V2. Lean's four image exports, palette position, one-cell placement, metrics and quote data are implemented and have passed local checks. Catalogue prices were aligned with Groovaly's current product pages. The new Pages and Shopify quote flow still require release testing; the Golden V1 site remains live until cutover.
+`main` contains Golden Age Builder V2. Lean's four image exports, palette position, one-cell placement, metrics and quote data are implemented. Catalogue prices were aligned with Groovaly's current product pages. The [new Pages preview](https://groovaly.github.io/groovaly-module-builder/) is published and has passed standalone desktop and mobile checks. The Shopify quote flow still requires an end-to-end check; the Golden V1 site remains live until cutover.
 
 ## How it works
 
@@ -52,4 +52,4 @@ The current module dimensions, weights and indicative prices are recorded in [Go
 
 ## Deployment and ownership
 
-This public repository contains a clean Golden Age V2 source snapshot. The complete earlier development history, including Classic Builder V2, is kept separately in a private archive under Groovaly's control. The workflow in this repository publishes `main` to its own GitHub Pages URL, allowing the V2 to be checked while the old V1 site continues to serve visitors. At cutover, update both the Shopify iframe URL and its trusted `postMessage` origin. See [Versions and deployment](docs/VERSIONS.md).
+This public repository contains a clean Golden Age V2 source snapshot. The complete earlier development history, including Classic Builder V2, is kept separately in a private archive under Groovaly's control. The workflow publishes `main` at [groovaly.github.io/groovaly-module-builder](https://groovaly.github.io/groovaly-module-builder/), allowing V2 to be checked while the old V1 site continues to serve visitors. At cutover, update both the Shopify iframe URL and its trusted `postMessage` origin. See [Versions and deployment](docs/VERSIONS.md).
