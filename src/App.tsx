@@ -49,7 +49,7 @@ export default function App(): JSX.Element {
   }, [isEmbed]);
 
   return (
-    <main className={`gb-app ${isEmbed ? 'gb-app-embed' : ''}`} style={vars as CSSProperties}>
+    <main className={`gb-app gb-app-fluid ${isEmbed ? 'gb-app-embed' : ''}`} style={vars as CSSProperties}>
       <section className="gb-content-shell gb-content-shell-builder-only">
         <ModuleBuilder showHeader={false} showDebug={false} embedMode={isEmbed} />
       </section>

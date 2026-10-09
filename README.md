@@ -9,6 +9,7 @@ Static React, TypeScript and Vite application for composing Golden Age furniture
 ## How it works
 
 - Drag modules from the palette to the grid or move a placed module. Placement checks grid boundaries, overlap and support from below.
+- The direct Pages URL and the embedded view use the same fluid builder layout. `?embed=1` removes the standalone page margins and enables communication with the Shopify parent page.
 - Review the composition and request a quote. The builder creates a layout, module counts, an estimated total and composition details for the request. This estimate is informational; the quote is handled individually.
 - When embedded with `?embed=1`, the builder sends the quote data to the Shopify page through `postMessage`. Shopify owns the customer-facing quote form and must accept messages from the builder's current Pages origin.
 - The builder attempts to upload an image of the composition to Cloudinary and include its URL in the quote data. If that upload fails, the data can still be sent without the image.
