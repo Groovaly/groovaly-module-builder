@@ -1,10 +1,10 @@
 # Groovaly Golden Age Builder
 
-Static React, TypeScript and Vite application for composing Golden Age furniture modules on a 6 × 4 grid and requesting an individual quote. The current product flow does not add items to a cart or take payment. See [Versions and deployment](docs/VERSIONS.md) for the release and handoff plan.
+Static React, TypeScript and Vite application for composing Golden Age furniture modules on a 6 × 4 grid and requesting an individual quote. The current product flow does not add items to a cart or take payment. See [Versions and deployment](docs/VERSIONS.md) for the release history and handoff details.
 
-## Current work
+## Production status (14 October 2026)
 
-`main` contains Golden Age Builder V2. Lean's four image exports, palette position, one-cell placement, metrics and quote data are implemented. Catalogue prices were aligned with Groovaly's current product pages. The [new Pages preview](https://groovaly.github.io/groovaly-module-builder/) is published and has passed standalone desktop and mobile checks. The Shopify quote flow still requires an end-to-end check; the Golden V1 site remains live until cutover.
+`main` contains the live Golden Age Builder V2, including Lean's four image exports, one-cell placement, metrics and quote data. Its palette shows Bloom, Grid, Lean on the second row and Cub, Split, Nest on the third. The [organization Pages site](https://groovaly.github.io/groovaly-module-builder/?embed=1) is embedded in the live [Golden Age collection](https://groovaly.com/collections/golden-age#create-your-own). Desktop, mobile and end-to-end quote checks passed after the Shopify cutover. The former personal Golden V1 Pages site remains available for rollback during stabilization.
 
 ## How it works
 
@@ -14,7 +14,7 @@ Static React, TypeScript and Vite application for composing Golden Age furniture
 - When embedded with `?embed=1`, the builder sends the quote data to the Shopify page through `postMessage`. Shopify owns the customer-facing quote form and must accept messages from the builder's current Pages origin.
 - The builder attempts to upload an image of the composition to Cloudinary and include its URL in the quote data. If that upload fails, the data can still be sent without the image.
 
-The application has no database or application server. GitHub Pages can host its built files. The quote form's Shopify integration and the Cloudinary upload are external services.
+The application has no database or application server. GitHub Pages hosts its built files. The customer form lives in a Shopify Custom Liquid block and sends requests through Formspree; Romain owns that Formspree account. Preview uploads use the Cloudinary cloud `dnzdunl2d` and unsigned preset `groovaly_quotes_unsigned`. These services are managed outside this repository.
 
 ## Run locally
 
@@ -38,7 +38,7 @@ Run the logic tests:
 npm test
 ```
 
-These tests do not cover the complete Shopify quote flow. Before release, check module placement, the generated quote data, the composition image and an actual form submission on desktop and mobile.
+These tests do not cover the complete Shopify quote flow. For a future release, also check module placement, the generated quote data, the composition image and an actual form submission on desktop and mobile.
 
 ## Code map
 
@@ -49,8 +49,8 @@ These tests do not cover the complete Shopify quote flow. Before release, check 
 - `public/images/grid` and `public/images/selection`: module images at normal and high resolution.
 - `.github/workflows/deploy-pages.yml`: Pages build and deployment workflow.
 
-The current module dimensions, weights and indicative prices are recorded in [Golden Age catalogue data](docs/CATALOG.md). Update the numeric prices in `ModuleBuilder.tsx` when Groovaly changes its public catalogue.
+The current module dimensions, weights and indicative prices are recorded in [Golden Age catalogue data](docs/CATALOG.md). Numeric prices are stored in `ModuleBuilder.tsx` and included in internal quote JSON, but the current customer-facing Shopify form does not display them. If that JSON is used for pricing later, update the code when Groovaly changes its catalogue.
 
 ## Deployment and ownership
 
-This public repository contains a clean Golden Age V2 source snapshot. The complete earlier development history, including Classic Builder V2, is kept separately in a private archive under Groovaly's control. The workflow publishes `main` at [groovaly.github.io/groovaly-module-builder](https://groovaly.github.io/groovaly-module-builder/), allowing V2 to be checked while the old V1 site continues to serve visitors. At cutover, update both the Shopify iframe URL and its trusted `postMessage` origin. See [Versions and deployment](docs/VERSIONS.md).
+This public repository contains a clean Golden Age V2 source snapshot. The complete earlier development history, including Classic Builder V2, is kept separately in the private [Groovaly archive](https://github.com/Groovaly/groovaly-module-builder-archive). The workflow publishes `main` at [groovaly.github.io/groovaly-module-builder](https://groovaly.github.io/groovaly-module-builder/). The live Shopify block points to this Pages site and trusts `https://groovaly.github.io` for builder messages. Romain has Owner access to the Groovaly GitHub organization. A Cloudinary Master Admin invitation was sent on 14 October; acceptance still needs confirmation. See [Versions and deployment](docs/VERSIONS.md).
