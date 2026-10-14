@@ -137,9 +137,9 @@ const MODULES: ModuleVisual[] = [
   { id: 'chest', name: 'Chest', w: 2 },
   { id: 'bloom', name: 'Bloom', w: 1 },
   { id: 'grid', name: 'Grid', w: 1 },
-  { id: 'split', name: 'Split', w: 1 },
-  { id: 'cub', name: 'Cub', w: 1 },
   { id: 'lean', name: 'Lean', w: 1 },
+  { id: 'cub', name: 'Cub', w: 1 },
+  { id: 'split', name: 'Split', w: 1 },
   { id: 'nest', name: 'Nest', w: 1 },
 ];
 
@@ -1068,10 +1068,10 @@ export function ModuleBuilder({
 
   const topRow = MODULES.filter((moduleItem) => moduleItem.id === 'tilt' || moduleItem.id === 'chest');
   const midRow = MODULES.filter(
-    (moduleItem) => moduleItem.id === 'bloom' || moduleItem.id === 'grid' || moduleItem.id === 'split',
+    (moduleItem) => moduleItem.id === 'bloom' || moduleItem.id === 'grid' || moduleItem.id === 'lean',
   );
   const bottomRow = MODULES.filter(
-    (moduleItem) => moduleItem.id === 'cub' || moduleItem.id === 'lean' || moduleItem.id === 'nest',
+    (moduleItem) => moduleItem.id === 'cub' || moduleItem.id === 'split' || moduleItem.id === 'nest',
   );
   const hasPlacedItems = placedItems.length > 0;
   const formatDimensionValue = (value: number): string =>
