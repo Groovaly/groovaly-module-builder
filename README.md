@@ -16,6 +16,12 @@ Static React, TypeScript and Vite application for composing Golden Age furniture
 
 The application has no database or application server. GitHub Pages hosts its built files. The customer form lives in a Shopify Custom Liquid block and sends requests through Formspree; Romain owns that Formspree account. Preview uploads use the Cloudinary cloud `dnzdunl2d` and unsigned preset `groovaly_quotes_unsigned`. These services are managed outside this repository.
 
+## Cobra seller page
+
+`/cobra/` (live: [groovaly.github.io/groovaly-module-builder/cobra/](https://groovaly.github.io/groovaly-module-builder/cobra/)) is a password-protected page for Cobra's sales staff. It reuses the builder (`variant="cobra"`), adds the 12 signature compositions, a finish choice (White Pearl, smooth or hammered lacquer, sheen, and a RAL Classic colour picker that recolours the modules on the grid and in the preview image — `src/cobra/RalPicker.tsx`, `src/cobra/ralColors.ts`, `src/logic/tint.ts`), a live public price, and a customer and delivery form. Each order is posted to Formspree (email to Romain plus the Formspree dashboard) with the price breakdown, readable composition, layout JSON and Cloudinary preview, then shown as a printable summary with a `CB-YYMMDD-XXXX` reference. The page is `noindex`.
+
+Everything Groovaly may change lives in `src/cobra/config.ts`: password hash, Formspree endpoint, feet prices, lacquer coefficient, rounding, signature prices and notes. Pricing logic and tests are in `src/cobra/pricing.ts`. To change the password, run `npm run cobra:password -- "new password"` and paste the hash into `PASSWORD_SHA256`. The gate is client-side: it keeps the page away from the public but is not real security.
+
 ## Run locally
 
 Use Node.js 20, as in the Pages workflow:

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type TouchEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type MutableRefObject, type TouchEvent } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -15,8 +15,9 @@ import {
 } from '@dnd-kit/core';
 import { GRID_COLS, GRID_ROWS, canPlace, rebuildOccupancy, type PlacedItem } from '../logic/grid';
 import { exportLayout } from '../logic/exportPreview';
+import { tintImageToCanvas, tintedDataUrl } from '../logic/tint';
 
-type ModuleId = 'tilt' | 'chest' | 'bloom' | 'grid' | 'split' | 'cub' | 'lean' | 'nest';
+export type ModuleId = 'tilt' | 'chest' | 'bloom' | 'grid' | 'split' | 'cub' | 'lean' | 'nest';
 
 type ModuleVisual = {
   id: ModuleId;
@@ -24,7 +25,7 @@ type ModuleVisual = {
   w: 1 | 2;
 };
 
-type QuotePayload = {
+export type QuotePayload = {
   generatedAt: string;
   mode: 'builder-only';
   summary: {
@@ -49,7 +50,7 @@ type QuotePayload = {
 
 type UnitSystem = 'cm' | 'in';
 
-type CompositionMetrics = {
+export type CompositionMetrics = {
   widthCm: number;
   heightCm: number;
   depthCm: number;
@@ -132,7 +133,7 @@ const BACKGROUNDS: BackgroundGeometry[] = [
   },
 ];
 
-const MODULES: ModuleVisual[] = [
+export const MODULES: ModuleVisual[] = [
   { id: 'tilt', name: 'Tilt', w: 2 },
   { id: 'chest', name: 'Chest', w: 2 },
   { id: 'bloom', name: 'Bloom', w: 1 },
@@ -143,7 +144,7 @@ const MODULES: ModuleVisual[] = [
   { id: 'nest', name: 'Nest', w: 1 },
 ];
 
-const MODULE_PRICES: Record<ModuleId, number> = {
+export const MODULE_PRICES: Record<ModuleId, number> = {
   tilt: 1190,
   chest: 1490,
   bloom: 1050,
@@ -298,7 +299,11 @@ function cmToInches(valueCm: number): number {
   return Math.round((valueCm / 2.54) * 10) / 10;
 }
 
-function buildReadableQuotePayload(layout: ReturnType<typeof exportLayout>, metrics: CompositionMetrics | null): string {
+function buildReadableQuotePayload(
+  layout: ReturnType<typeof exportLayout>,
+  metrics: CompositionMetrics | null,
+  finishLabel = 'White Pearl',
+): string {
   const modules = [...layout.modules].sort(
     (a, b) => a.y - b.y || a.x - b.x || a.type.localeCompare(b.type),
   );
@@ -314,7 +319,7 @@ function buildReadableQuotePayload(layout: ReturnType<typeof exportLayout>, metr
     const colEnd = colStart + moduleItem.w - 1;
     const colLabel = colStart === colEnd ? `Col${colStart}` : `Col${colStart}-${colEnd}`;
     const feet = moduleItem.feet ? 'Yes' : 'No';
-    return `1x ${moduleItem.type} - Quantity: 1 ; Position: Row${moduleItem.y + 1}/${colLabel} ; Color: White Pearl ; Feet: ${feet}`;
+    return `1x ${moduleItem.type} - Quantity: 1 ; Position: Row${moduleItem.y + 1}/${colLabel} ; Color: ${finishLabel} ; Feet: ${feet}`;
   });
 
   const grouped = new Map<string, { type: string; feet: 'Yes' | 'No'; quantity: number }>();
@@ -336,7 +341,7 @@ function buildReadableQuotePayload(layout: ReturnType<typeof exportLayout>, metr
         a.type.localeCompare(b.type) ||
         (a.feet === b.feet ? 0 : a.feet === 'Yes' ? -1 : 1),
     )
-    .map((line) => `${line.quantity}x ${line.type} - Quantity:${line.quantity} ; Color: White Pearl ; Feet: ${line.feet}`);
+    .map((line) => `${line.quantity}x ${line.type} - Quantity:${line.quantity} ; Color: ${finishLabel} ; Feet: ${line.feet}`);
 
   const sizeAndWeightLines = metrics
     ? [
@@ -455,12 +460,14 @@ function PlacedModule({
   scale,
   hires,
   onRemove,
+  src,
 }: {
   item: PlacedItem;
   geometry: BackgroundGeometry;
   scale: number;
   hires: boolean;
   onRemove: (id: string) => void;
+  src?: string;
 }): JSX.Element {
   const moduleItem = moduleById(item.typeId as ModuleId);
   const top = rowTop(item.row, geometry) * scale;
@@ -494,7 +501,7 @@ function PlacedModule({
       {...listeners}
       {...attributes}
     >
-      <img src={gridModuleSrc(moduleItem.id, hires)} alt={moduleItem.name} className="mb-placed-image" draggable={false} />
+      <img src={src ?? gridModuleSrc(moduleItem.id, hires)} alt={moduleItem.name} className="mb-placed-image" draggable={false} />
 
       <button
         type="button"
@@ -512,11 +519,23 @@ function PlacedModule({
   );
 }
 
-function DragModulePreview({ moduleId, width, height, hires }: { moduleId: ModuleId; width: number; height: number; hires: boolean }): JSX.Element {
+function DragModulePreview({
+  moduleId,
+  width,
+  height,
+  hires,
+  src,
+}: {
+  moduleId: ModuleId;
+  width: number;
+  height: number;
+  hires: boolean;
+  src?: string;
+}): JSX.Element {
   const moduleItem = moduleById(moduleId);
   return (
     <div className="mb-overlay" style={{ width, height }}>
-      <img src={gridModuleSrc(moduleItem.id, hires)} alt={moduleItem.name} className="mb-overlay-image" draggable={false} />
+      <img src={src ?? gridModuleSrc(moduleItem.id, hires)} alt={moduleItem.name} className="mb-overlay-image" draggable={false} />
     </div>
   );
 }
@@ -546,17 +565,59 @@ function isRectOutsideSceneCenter(rect: GhostRect, scene: HTMLDivElement | null)
   return centerX < bounds.left || centerX > bounds.right || centerY < bounds.top || centerY > bounds.bottom;
 }
 
+export type BuilderLabels = {
+  dragHint: string;
+  clearGrid: string;
+  addFeet: string;
+  requestQuote: string;
+  uploading: string;
+};
+
+const DEFAULT_LABELS: BuilderLabels = {
+  dragHint: 'Drag modules onto the grid',
+  clearGrid: 'Clear grid',
+  addFeet: 'add feet',
+  requestQuote: 'Request a quote',
+  uploading: 'Uploading preview...',
+};
+
+export type CompositionSnapshot = {
+  placedItems: PlacedItem[];
+  addFeet: boolean;
+  metrics: CompositionMetrics | null;
+};
+
+export type BuilderController = {
+  /** Builds the quote payload, uploads the preview image and adds the readable text. */
+  captureComposition: (finishLabel: string) => Promise<QuotePayload | null>;
+  reset: () => void;
+};
+
 type ModuleBuilderProps = {
   showHeader?: boolean;
   showDebug?: boolean;
   embedMode?: boolean;
+  /** 'cobra' hides the quote buttons: the seller page owns the order flow. */
+  variant?: 'public' | 'cobra';
+  labels?: Partial<BuilderLabels>;
+  onCompositionChange?: (snapshot: CompositionSnapshot) => void;
+  controllerRef?: MutableRefObject<BuilderController | null>;
+  /** Lacquer colour (hex) used to recolour the modules on the grid and in the preview image. */
+  tintHex?: string | null;
 };
 
 export function ModuleBuilder({
   showHeader: _showHeader = true,
   showDebug = false,
   embedMode = false,
+  variant = 'public',
+  labels: labelOverrides,
+  onCompositionChange,
+  controllerRef,
+  tintHex = null,
 }: ModuleBuilderProps): JSX.Element {
+  const labels: BuilderLabels = { ...DEFAULT_LABELS, ...labelOverrides };
+  const showQuoteButtons = variant !== 'cobra';
   const [placedItems, setPlacedItems] = useState<PlacedItem[]>([]);
   const [activeDrag, setActiveDrag] = useState<ActiveDrag | null>(null);
   const [candidate, setCandidate] = useState<CandidatePlacement | null>(null);
@@ -597,6 +658,33 @@ export function ModuleBuilder({
   );
 
   const hires = dpr >= 1.5;
+
+  const [tintedSources, setTintedSources] = useState<{ key: string; sources: Partial<Record<ModuleId, string>> }>({
+    key: '',
+    sources: {},
+  });
+  const tintKey = tintHex ? `${tintHex}|${hires ? 'hires' : 'std'}` : '';
+
+  useEffect(() => {
+    if (!tintHex) return;
+    let cancelled = false;
+    Promise.all(
+      MODULES.map(async (moduleItem) => {
+        const url = await tintedDataUrl(gridModuleSrc(moduleItem.id, hires), tintHex);
+        return [moduleItem.id, url] as const;
+      }),
+    )
+      .then((entries) => {
+        if (!cancelled) setTintedSources({ key: tintKey, sources: Object.fromEntries(entries) });
+      })
+      .catch((error) => console.warn('[Groovaly builder] Tinting failed', error));
+    return () => {
+      cancelled = true;
+    };
+  }, [tintHex, hires, tintKey]);
+
+  const moduleSrc = (moduleId: ModuleId): string | undefined =>
+    tintHex && tintedSources.key === tintKey ? tintedSources.sources[moduleId] : undefined;
   const background = useMemo(() => resolveBackground(sceneWidth, dpr), [sceneWidth, dpr]);
   const sceneHeight = sceneWidth > 0 ? (sceneWidth / background.width) * background.height : 0;
   const scale = sceneWidth > 0 ? sceneWidth / background.width : 1;
@@ -882,6 +970,11 @@ export function ModuleBuilder({
     [placedItems, addFeet],
   );
 
+  useEffect(() => {
+    onCompositionChange?.({ placedItems, addFeet, metrics: compositionMetrics });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [placedItems, addFeet, compositionMetrics]);
+
   const buildQuotePayload = (): QuotePayload => {
     const counts = new Map<ModuleId, number>();
     for (const item of placedItems) {
@@ -966,7 +1059,8 @@ export function ModuleBuilder({
       const top = toY(rowTop(item.row, background));
       const width = toX(item.w * background.colWidth);
       const height = toY(background.rowHeight);
-      context.drawImage(moduleImage, left, top, width, height);
+      const source = tintHex ? tintImageToCanvas(moduleImage, tintHex) : moduleImage;
+      context.drawImage(source, left, top, width, height);
     });
     await Promise.all(moduleTasks);
 
@@ -1066,6 +1160,33 @@ export function ModuleBuilder({
     }
   };
 
+  const captureComposition = async (finishLabel: string): Promise<QuotePayload | null> => {
+    if (placedItems.length === 0) return null;
+    const payload = buildQuotePayload();
+    try {
+      const screenshot = await buildSceneScreenshotBlob();
+      if (screenshot) {
+        const uploaded = await uploadQuotePreviewToCloudinary(screenshot);
+        if (uploaded) {
+          payload.previewImageUrl = uploaded.secureUrl;
+          payload.previewImageWidth = uploaded.width;
+          payload.previewImageHeight = uploaded.height;
+        }
+      }
+    } catch (error) {
+      console.warn('[Groovaly builder] Preview upload failed, composition will be sent without image.', error);
+    }
+    payload.quotePayloadText = buildReadableQuotePayload(payload.layout, compositionMetrics, finishLabel);
+    return payload;
+  };
+
+  if (controllerRef) {
+    controllerRef.current = {
+      captureComposition,
+      reset: () => resetBuilder(),
+    };
+  }
+
   const topRow = MODULES.filter((moduleItem) => moduleItem.id === 'tilt' || moduleItem.id === 'chest');
   const midRow = MODULES.filter(
     (moduleItem) => moduleItem.id === 'bloom' || moduleItem.id === 'grid' || moduleItem.id === 'lean',
@@ -1092,7 +1213,7 @@ export function ModuleBuilder({
   };
 
   return (
-    <section className={`mb-builder ${isCompactLayout ? 'is-mobile-layout' : ''}`} aria-label="Module setup builder">
+    <section className={`mb-builder ${isCompactLayout ? 'is-mobile-layout' : ''} mb-variant-${variant}`} aria-label="Module setup builder">
       <DndContext
         sensors={sensors}
         onDragStart={handleDragStart}
@@ -1155,6 +1276,7 @@ export function ModuleBuilder({
                 geometry={background}
                 scale={scale}
                 hires={hires}
+                src={moduleSrc(item.typeId as ModuleId)}
                 onRemove={(id) => setPlacedItems((current) => current.filter((entry) => entry.id !== id))}
               />
             ))}
@@ -1163,7 +1285,7 @@ export function ModuleBuilder({
               <>
                 <button type="button" className="mb-reset-link mb-reset-link-overlay" onClick={resetBuilder}>
                   <img src={withBase('/images/icons/icon_reset.png')} alt="" aria-hidden="true" />
-                  <span className="mb-reset-link-text">Clear grid</span>
+                  <span className="mb-reset-link-text">{labels.clearGrid}</span>
                 </button>
                 <div className="mb-right-overlay-controls">
                   {dimensions ? (
@@ -1192,7 +1314,7 @@ export function ModuleBuilder({
                     <span className="mb-feet-check" aria-hidden="true">
                       <span className={addFeet ? 'is-on' : ''} />
                     </span>
-                    <span className="mb-feet-label">add feet</span>
+                    <span className="mb-feet-label">{labels.addFeet}</span>
                   </button>
                 </div>
               </>
@@ -1201,21 +1323,23 @@ export function ModuleBuilder({
             {actionsMounted ? (
               <div className={`mb-actions ${actionsVisible ? 'is-visible' : 'is-hidden'}`}>
                 <div className="mb-actions-left">
-                  <button
-                    type="button"
-                    className="mb-btn mb-btn-preorder"
-                    onClick={handleRequestQuote}
-                    disabled={placedItems.length === 0 || isQuoteSubmitting}
-                  >
-                    {isQuoteSubmitting ? 'Uploading preview...' : 'Request a quote'}
-                  </button>
+                  {showQuoteButtons ? (
+                    <button
+                      type="button"
+                      className="mb-btn mb-btn-preorder"
+                      onClick={handleRequestQuote}
+                      disabled={placedItems.length === 0 || isQuoteSubmitting}
+                    >
+                      {isQuoteSubmitting ? labels.uploading : labels.requestQuote}
+                    </button>
+                  ) : null}
                   <button
                     type="button"
                     className="mb-reset-link"
                     onClick={resetBuilder}
                   >
                     <img src={withBase('/images/icons/icon_reset.png')} alt="" aria-hidden="true" />
-                    <span className="mb-reset-link-text">Clear grid</span>
+                    <span className="mb-reset-link-text">{labels.clearGrid}</span>
                   </button>
                 </div>
               </div>
@@ -1251,16 +1375,16 @@ export function ModuleBuilder({
             <div className="mb-side-head-right">
               <div className="mb-side-subtitle">
                 <img src={withBase('/images/icons/icon_drag.png')} alt="" aria-hidden="true" />
-                <span>Drag modules onto the grid</span>
+                <span>{labels.dragHint}</span>
               </div>
-              {hasPlacedItems ? (
+              {hasPlacedItems && showQuoteButtons ? (
                 <button
                   type="button"
                   className="mb-btn mb-btn-preorder mb-btn-preorder-mobile"
                   onClick={handleRequestQuote}
                   disabled={isQuoteSubmitting}
                 >
-                  {isQuoteSubmitting ? 'Uploading preview...' : 'Request a quote'}
+                  {isQuoteSubmitting ? labels.uploading : labels.requestQuote}
                 </button>
               ) : null}
             </div>
@@ -1307,7 +1431,13 @@ export function ModuleBuilder({
                 isCompactLayout && !hasDragMoved ? 'is-touch-hold' : ''
               }`}
             >
-              <DragModulePreview moduleId={activeDrag.typeId} width={previewSize.width} height={previewSize.height} hires={hires} />
+              <DragModulePreview
+                moduleId={activeDrag.typeId}
+                width={previewSize.width}
+                height={previewSize.height}
+                hires={hires}
+                src={moduleSrc(activeDrag.typeId)}
+              />
               {isGhostOutsideScene && activeDrag.source === 'grid' ? (
                 <span className="mb-overlay-remove-icon" aria-hidden="true">
                   <img src={withBase('/images/icons/icon_remove.png')} alt="" />
@@ -1328,7 +1458,11 @@ export function ModuleBuilder({
           }}
           aria-hidden="true"
         >
-          <img src={gridModuleSrc(dismissGhost.moduleId, dismissGhost.hires)} alt="" className="mb-dismiss-ghost-image" />
+          <img
+            src={moduleSrc(dismissGhost.moduleId) ?? gridModuleSrc(dismissGhost.moduleId, dismissGhost.hires)}
+            alt=""
+            className="mb-dismiss-ghost-image"
+          />
           <span className="mb-overlay-remove-icon">
             <img src={withBase('/images/icons/icon_remove.png')} alt="" />
           </span>
@@ -1350,6 +1484,7 @@ export function ModuleBuilder({
             width={holdPreview.width}
             height={holdPreview.height}
             hires={holdPreview.hires}
+            src={moduleSrc(holdPreview.moduleId)}
           />
         </div>
       ) : null}
