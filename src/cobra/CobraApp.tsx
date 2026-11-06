@@ -49,9 +49,6 @@ type CustomerForm = {
   postalCode: string;
   city: string;
   country: string;
-  floor: string;
-  elevator: string;
-  access: string;
   notes: string;
 };
 
@@ -66,9 +63,6 @@ const EMPTY_FORM: CustomerForm = {
   postalCode: '',
   city: '',
   country: 'France',
-  floor: '',
-  elevator: '',
-  access: '',
   notes: '',
 };
 
@@ -342,9 +336,6 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
       ['Email client', form.clientEmail],
       ['Téléphone client', form.clientPhone],
       ['Adresse de livraison', address],
-      ['Étage', form.floor || '—'],
-      ['Ascenseur', form.elevator || '—'],
-      ['Accès / digicode', form.access || '—'],
       ['Remarques', form.notes || '—'],
       ['Dimensions', dimensions || '—'],
       ['Détail de la composition', compositionText.replace(/\r?\n/g, '\r\n')],
@@ -634,25 +625,6 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
                   </select>
                 </label>
               </div>
-              <div className="cb-grid-3">
-                <label className="cb-field">
-                  <span>Étage</span>
-                  <input value={form.floor} onChange={(event) => update('floor', event.target.value)} />
-                </label>
-                <label className="cb-field">
-                  <span>Ascenseur</span>
-                  <select value={form.elevator} onChange={(event) => update('elevator', event.target.value)}>
-                    <option value="">—</option>
-                    <option>Oui</option>
-                    <option>Oui, petit</option>
-                    <option>Non</option>
-                  </select>
-                </label>
-                <label className="cb-field">
-                  <span>Accès / digicode</span>
-                  <input value={form.access} onChange={(event) => update('access', event.target.value)} />
-                </label>
-              </div>
 
               <label className="cb-field">
                 <span>Remarques</span>
@@ -842,13 +814,6 @@ function Confirmation({ order, onNew }: { order: SentOrder; onNew: () => void })
               {form.postalCode} {form.city}
             </p>
             <p>{form.country}</p>
-            {form.floor || form.elevator || form.access ? (
-              <p className="cb-muted">
-                {[form.floor && `Étage ${form.floor}`, form.elevator && `Ascenseur : ${form.elevator}`, form.access]
-                  .filter(Boolean)
-                  .join(' · ')}
-              </p>
-            ) : null}
             <h3 className="cb-subhead">Vendeur</h3>
             <p>{form.seller}</p>
           </div>
