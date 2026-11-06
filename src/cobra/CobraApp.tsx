@@ -167,7 +167,7 @@ function PasswordGate({ onUnlock }: { onUnlock: () => void }): JSX.Element {
       <form className="cb-gate-card" onSubmit={submit}>
         <img src={withBase('/brand/Logo_Groovaly.webp')} alt="Groovaly" className="cb-gate-logo" />
         <p className="cb-eyebrow">Espace {STORE_NAME}</p>
-        <h1 className="cb-gate-title">Collection Golden Age</h1>
+        <h1 className="cb-gate-title">Golden Age</h1>
         <label className="cb-field">
           <span>Mot de passe</span>
           <input
