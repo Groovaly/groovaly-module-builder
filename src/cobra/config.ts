@@ -33,7 +33,7 @@ export const PASSWORD_SHA256 = '92c54b43c2415e1ea3341e692ecc101dc6f64a79ed284842
  * Recommended: create a dedicated "Cobra" form in Formspree and paste its
  * endpoint here, so store orders are kept apart from website quote requests.
  */
-export const FORM_ENDPOINT = 'https://formspree.io/f/mqerwngq';
+export const FORM_ENDPOINT = 'https://formspree.io/f/xkjjedjk';
 
 export const STORE_NAME = 'Cobra';
 
