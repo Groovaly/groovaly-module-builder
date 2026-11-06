@@ -29,6 +29,7 @@ import {
   type PriceBreakdown,
 } from './pricing';
 import { RalPicker } from './RalPicker';
+import { AddressAutocomplete } from './AddressAutocomplete';
 import type { RalColour } from './ralColors';
 
 const UNLOCK_KEY = 'groovaly-cobra-unlock';
@@ -197,7 +198,7 @@ export default function CobraApp(): JSX.Element {
   const [unlocked, setUnlocked] = useState(() => safeStorageGet(UNLOCK_KEY) === PASSWORD_SHA256);
 
   useEffect(() => {
-    document.title = `Golden Age · Espace ${STORE_NAME}`;
+    document.title = `Collection Golden Age · ${STORE_NAME}`;
   }, []);
 
   if (!unlocked) {
@@ -389,7 +390,7 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
           <span className="cb-header-x">×</span>
           <span className="cb-header-store">{STORE_NAME}</span>
         </div>
-        <div className="cb-header-title">Golden Age · Espace vendeurs</div>
+        <div className="cb-header-title">Collection Golden Age</div>
         <button type="button" className="cb-link" onClick={onLock}>
           Verrouiller
         </button>
@@ -429,7 +430,7 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
           <div className={`cb-builder ${mode === 'custom' ? '' : 'is-hidden'}`}>
             <p className="cb-hint">
               Glissez les modules sur la grille. Un module seul se commande aussi ici. Pour une des 12 compositions
-              signature, utilisez l'onglet « Composition signature » : son prix est celui du catalogue.
+              signature, utilisez l'onglet « Composition signature ».
             </p>
             <div className="gb-app-fluid">
               <ModuleBuilder
@@ -580,11 +581,19 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
               <h3 className="cb-subhead">Adresse de livraison</h3>
               <label className="cb-field">
                 <span>Adresse *</span>
-                <input
-                  required
-                  autoComplete="off"
+                <AddressAutocomplete
                   value={form.address}
-                  onChange={(event) => update('address', event.target.value)}
+                  enabled={form.country === 'France'}
+                  onChange={(value) => update('address', value)}
+                  onSelect={(suggestion) =>
+                    setForm((current) => ({
+                      ...current,
+                      address: suggestion.street,
+                      postalCode: suggestion.postcode,
+                      city: suggestion.city,
+                      country: 'France',
+                    }))
+                  }
                 />
               </label>
               <label className="cb-field">
@@ -703,8 +712,7 @@ function PriceSummary({
 }): JSX.Element {
   return (
     <div className="cb-summary-card">
-      <p className="cb-eyebrow">Prix public</p>
-      <p className="cb-total">{breakdown ? formatEuro(breakdown.total) : '—'}</p>
+      {breakdown ? <p className="cb-total">{formatEuro(breakdown.total)}</p> : null}
       <p className="cb-summary-meta">{compositionLabel}</p>
       <p className="cb-summary-meta">{finishLabel}</p>
       {dimensions ? <p className="cb-summary-meta cb-muted">{dimensions}</p> : null}

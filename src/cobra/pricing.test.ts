@@ -54,3 +54,18 @@ describe('Cobra pricing (same rules as the quoting workbook)', () => {
     expect(result.total).toBe(1050);
   });
 });
+
+import { parseAddressResponse } from './AddressAutocomplete';
+
+describe('address autocomplete parsing', () => {
+  it('maps BAN results to street, postcode and city, and skips bare municipalities', () => {
+    const results = parseAddressResponse({
+      features: [
+        { properties: { label: '12 Rue des Martyrs 75009 Paris', name: '12 Rue des Martyrs', postcode: '75009', city: 'Paris', type: 'housenumber' } },
+        { properties: { label: 'Paris', name: 'Paris', postcode: '75001', city: 'Paris', type: 'municipality' } },
+      ],
+    });
+    expect(results).toEqual([{ label: '12 Rue des Martyrs 75009 Paris', street: '12 Rue des Martyrs', postcode: '75009', city: 'Paris' }]);
+    expect(parseAddressResponse(null)).toEqual([]);
+  });
+});

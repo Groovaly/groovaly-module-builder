@@ -21,7 +21,7 @@
  * are the public ones); the gate keeps the tool away from the public.
  */
 export const PASSWORD_SALT = 'groovaly-cobra-v1:';
-export const PASSWORD_SHA256 = 'ecc724a6437fb5c0d34c3aaec649b695bde3c28e80021bfe35e81c3a7c9b2eec';
+export const PASSWORD_SHA256 = '92c54b43c2415e1ea3341e692ecc101dc6f64a79ed28484297b156ecd2ecf399';
 
 /* ------------------------------------------------------------------ */
 /* Where orders are sent                                               */
@@ -36,6 +36,13 @@ export const PASSWORD_SHA256 = 'ecc724a6437fb5c0d34c3aaec649b695bde3c28e80021bfe
 export const FORM_ENDPOINT = 'https://formspree.io/f/mqerwngq';
 
 export const STORE_NAME = 'Cobra';
+
+/**
+ * Address autocomplete for France: IGN Géoplateforme geocoding (Base Adresse
+ * Nationale), free, no key, limited to 50 requests/second per IP. Other
+ * countries are typed by hand.
+ */
+export const ADDRESS_API = 'https://data.geopf.fr/geocodage/search';
 
 /* ------------------------------------------------------------------ */
 /* Finishes                                                            */
@@ -228,5 +235,5 @@ export const PRICE_NOTES = [
   DELIVERY_INCLUDED
     ? 'Prix public TTC, livraison incluse.'
     : 'Prix public TTC. Livraison calculée selon le pays de livraison et le poids.',
-  'Fabrication à la commande au Portugal : 8 à 12 semaines.',
+  'Fabrication à la commande : 8 à 12 semaines.',
 ];
