@@ -184,6 +184,12 @@
   color: var(--gb-muted);
 }
 
+.cb-header-store-logo {
+  height: 18px;
+  width: auto;
+  display: block;
+}
+
 .cb-header-store {
   font-family: 'Libre Baskerville Local', var(--gb-heading-font), serif;
   font-size: 18px;

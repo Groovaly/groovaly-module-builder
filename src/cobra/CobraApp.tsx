@@ -379,7 +379,7 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
         <div className="cb-header-brand">
           <img src={withBase('/brand/Logo_Groovaly.webp')} alt="Groovaly" className="cb-header-logo" />
           <span className="cb-header-x">×</span>
-          <span className="cb-header-store">{STORE_NAME}</span>
+          <img src={withBase('/brand/Logo_Cobra.png')} alt={STORE_NAME} className="cb-header-store-logo" />
         </div>
         <div className="cb-header-title">Collection Golden Age</div>
         <button type="button" className="cb-link" onClick={onLock}>
@@ -413,7 +413,7 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
                 className={mode === 'signature' ? 'is-active' : ''}
                 onClick={() => setMode('signature')}
               >
-                Composition signature
+                Compositions signature
               </button>
             </div>
           </div>
@@ -421,7 +421,7 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
           <div className={`cb-builder ${mode === 'custom' ? '' : 'is-hidden'}`}>
             <p className="cb-hint">
               Glissez les modules sur la grille. Un module seul se commande aussi ici. Pour une des 12 compositions
-              signature, utilisez l'onglet « Composition signature ».
+              signature, utilisez l'onglet « Compositions signature ».
             </p>
             <div className="gb-app-fluid">
               <ModuleBuilder
