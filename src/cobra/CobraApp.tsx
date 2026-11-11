@@ -41,7 +41,8 @@ type RequestType = 'Commande confirmée' | 'Devis à valider par le client';
 type CustomerForm = {
   seller: string;
   requestType: RequestType;
-  clientName: string;
+  clientFirstName: string;
+  clientLastName: string;
   clientEmail: string;
   clientPhone: string;
   address: string;
@@ -52,10 +53,14 @@ type CustomerForm = {
   notes: string;
 };
 
+const clientFullName = (form: { clientFirstName: string; clientLastName: string }): string =>
+  `${form.clientFirstName.trim()} ${form.clientLastName.trim()}`.trim();
+
 const EMPTY_FORM: CustomerForm = {
   seller: '',
   requestType: 'Commande confirmée',
-  clientName: '',
+  clientFirstName: '',
+  clientLastName: '',
   clientEmail: '',
   clientPhone: '',
   address: '',
@@ -314,7 +319,7 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
       .join('\n');
 
     const fields: Array<[string, string]> = [
-      ['_subject', `${STORE_NAME} · ${form.requestType} ${reference} · ${form.clientName} · ${formatEuro(breakdown.total)}`],
+      ['_subject', `${STORE_NAME} · ${form.requestType} ${reference} · ${clientFullName(form)} · ${formatEuro(breakdown.total)}`],
       ['Référence', reference],
       ['Date', formatDate(sentAt)],
       ['Magasin', STORE_NAME],
@@ -332,7 +337,9 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
       ['Livraison', deliveryLabel(breakdown.delivery)],
       ['Zone / tranche', `${breakdown.delivery.zone ?? 'Hors zone'} · ${breakdown.delivery.bracket} · ${formatKg(breakdown.weightKg)}`],
       ['Détail du prix', priceLinesText(breakdown, finish)],
-      ['Client', form.clientName],
+      ['Client', clientFullName(form)],
+      ['Prénom client', form.clientFirstName.trim()],
+      ['Nom client', form.clientLastName.trim()],
       ['Email client', form.clientEmail],
       ['Téléphone client', form.clientPhone],
       ['Adresse de livraison', address],
@@ -537,15 +544,26 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
               </div>
 
               <h3 className="cb-subhead">Client</h3>
-              <label className="cb-field">
-                <span>Nom et prénom *</span>
-                <input
-                  required
-                  autoComplete="off"
-                  value={form.clientName}
-                  onChange={(event) => update('clientName', event.target.value)}
-                />
-              </label>
+              <div className="cb-grid-2">
+                <label className="cb-field">
+                  <span>Prénom *</span>
+                  <input
+                    required
+                    autoComplete="off"
+                    value={form.clientFirstName}
+                    onChange={(event) => update('clientFirstName', event.target.value)}
+                  />
+                </label>
+                <label className="cb-field">
+                  <span>Nom *</span>
+                  <input
+                    required
+                    autoComplete="off"
+                    value={form.clientLastName}
+                    onChange={(event) => update('clientLastName', event.target.value)}
+                  />
+                </label>
+              </div>
               <div className="cb-grid-2">
                 <label className="cb-field">
                   <span>Email *</span>
@@ -804,7 +822,7 @@ function Confirmation({ order, onNew }: { order: SentOrder; onNew: () => void })
           </div>
           <div>
             <h3 className="cb-subhead">Client</h3>
-            <p>{form.clientName}</p>
+            <p>{clientFullName(form)}</p>
             <p>{form.clientEmail}</p>
             <p>{form.clientPhone}</p>
             <h3 className="cb-subhead">Livraison</h3>
