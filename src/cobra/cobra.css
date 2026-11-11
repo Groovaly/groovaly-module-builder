@@ -175,6 +175,11 @@
   display: block;
 }
 
+/* In the top bar, the wordmark matches the size of the store name next to it. */
+.cb-header .cb-header-logo {
+  width: 72px;
+}
+
 .cb-header-x {
   color: var(--gb-muted);
 }
