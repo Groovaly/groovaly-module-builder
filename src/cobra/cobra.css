@@ -181,6 +181,9 @@
 }
 
 .cb-header-x {
+  /* Optical centring: equal visible space to both logos. */
+  position: relative;
+  left: 1px;
   color: var(--gb-muted);
 }
 
