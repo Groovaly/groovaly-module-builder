@@ -377,9 +377,9 @@ function SellerPage({ onLock }: { onLock: () => void }): JSX.Element {
     <>
       <header className="cb-header">
         <div className="cb-header-brand">
-          <img src={withBase('/brand/Logo_Groovaly.webp')} alt="Groovaly" className="cb-header-logo" />
-          <span className="cb-header-x">×</span>
           <img src={withBase('/brand/Logo_Cobra.png')} alt={STORE_NAME} className="cb-header-store-logo" />
+          <span className="cb-header-x">×</span>
+          <img src={withBase('/brand/Logo_Groovaly.webp')} alt="Groovaly" className="cb-header-logo" />
         </div>
         <div className="cb-header-title">Collection Golden Age</div>
         <button type="button" className="cb-link" onClick={onLock}>
