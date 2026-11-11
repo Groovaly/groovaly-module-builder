@@ -177,7 +177,7 @@
 
 /* In the top bar, the wordmark matches the size of the store name next to it. */
 .cb-header .cb-header-logo {
-  width: 72px;
+  width: 86px;
 }
 
 .cb-header-x {
@@ -185,7 +185,7 @@
 }
 
 .cb-header-store-logo {
-  height: 18px;
+  height: 21.6px;
   width: auto;
   display: block;
 }
