@@ -1,0 +1,401 @@
+{%- comment -%}
+  Golden Age builder — "Create your own" (collection golden-age).
+  The builder (GitHub Pages, iframe) composes a White Pearl composition and
+  shows its live price. This block is the bridge with the Shopify store:
+  it reads live prices and variant ids of the Golden Age products, adds the
+  composition to the cart and opens the cart. Source of truth for the code:
+  github.com/Groovaly/groovaly-module-builder (shopify/golden-age-builder.liquid).
+{%- endcomment -%}
+<div class="groovaly-configurator-embed" id="create-your-own-builder">
+  <iframe
+    id="groovaly-configurator-iframe"
+    src="https://groovaly.github.io/groovaly-module-builder/shop/?embed=1"
+    title="Golden Age builder"
+    style="width:100%; border:0; display:block; background:#fff;"
+    scrolling="no"
+    loading="lazy"
+    referrerpolicy="strict-origin-when-cross-origin"
+  ></iframe>
+</div>
+
+<p class="groovaly-quote-direct">
+  Looking for a lacquered finish, in the colour of your choice?<br>
+  <a href="#" id="groovaly-quote-direct-link">Request a quote directly</a>
+</p>
+
+<div id="groovaly-quote-overlay" class="groovaly-quote-overlay" hidden>
+  <div class="groovaly-quote-modal" role="dialog" aria-modal="true" aria-labelledby="groovaly-quote-title">
+    <button type="button" class="groovaly-quote-close" aria-label="Close">&times;</button>
+
+    <div id="groovaly-quote-form-view">
+      <h3 id="groovaly-quote-title">Request a quote</h3>
+      <p class="groovaly-quote-intro">White Pearl compositions can be ordered directly with the builder above.</p>
+
+      <div id="groovaly-quote-error" class="groovaly-quote-errors" hidden>
+        Something went wrong. Please try again.
+      </div>
+
+      <form id="groovaly-quote-form">
+        <div class="groovaly-quote-field">
+          <label for="groovaly-quote-name">Name</label>
+          <input type="text" id="groovaly-quote-name" name="name">
+        </div>
+
+        <div class="groovaly-quote-field">
+          <label for="groovaly-quote-email">Email <span class="groovaly-quote-required">(required)</span></label>
+          <input type="email" id="groovaly-quote-email" name="email" required>
+        </div>
+
+        <div class="groovaly-quote-field">
+          <label for="groovaly-quote-phone">Phone</label>
+          <input type="tel" id="groovaly-quote-phone" name="phone">
+        </div>
+
+        <div class="groovaly-quote-checkbox">
+          <input type="checkbox" id="groovaly-quote-marketing" name="marketing" value="yes">
+          <label for="groovaly-quote-marketing">Sign up for news and updates</label>
+        </div>
+
+        <div class="groovaly-quote-field">
+          <label for="groovaly-quote-country">Country <span class="groovaly-quote-required">(required)</span></label>
+          <p class="groovaly-quote-country-note">
+            Please note: the Golden Age Collection ships across the EU.
+            For worldwide delivery, please explore <a href="/products/bloom-console" class="groovaly-quote-inline-link">Bloom Console</a>.
+          </p>
+          <select id="groovaly-quote-country" name="country" required>
+            <option value="" disabled selected>Select a country</option>
+            <option value="Austria">Austria</option>
+            <option value="Belgium">Belgium</option>
+            <option value="Bulgaria">Bulgaria</option>
+            <option value="Croatia">Croatia</option>
+            <option value="Cyprus">Cyprus</option>
+            <option value="Czechia">Czechia</option>
+            <option value="Denmark">Denmark</option>
+            <option value="Estonia">Estonia</option>
+            <option value="Finland">Finland</option>
+            <option value="France">France</option>
+            <option value="Germany">Germany</option>
+            <option value="Greece">Greece</option>
+            <option value="Hungary">Hungary</option>
+            <option value="Ireland">Ireland</option>
+            <option value="Italy">Italy</option>
+            <option value="Latvia">Latvia</option>
+            <option value="Lithuania">Lithuania</option>
+            <option value="Luxembourg">Luxembourg</option>
+            <option value="Malta">Malta</option>
+            <option value="Netherlands">Netherlands</option>
+            <option value="Poland">Poland</option>
+            <option value="Portugal">Portugal</option>
+            <option value="Romania">Romania</option>
+            <option value="Slovakia">Slovakia</option>
+            <option value="Slovenia">Slovenia</option>
+            <option value="Spain (mainland)">Spain (mainland)</option>
+            <option value="Sweden">Sweden</option>
+            <option value="Other">Other</option>
+          </select>
+        </div>
+
+        <div class="groovaly-quote-field" id="groovaly-quote-composition-field">
+          <label for="groovaly-quote-composition">Composition <span class="groovaly-quote-required">(required)</span></label>
+          <select id="groovaly-quote-composition" name="composition" required>
+            <option value="" disabled selected>Select a composition</option>
+            <option value="My own composition">My own composition</option>
+            <option value="Single module(s)">One or more single modules</option>
+            <option value="Alton">Alton</option>
+            <option value="Curtis">Curtis</option>
+            <option value="James">James</option>
+            <option value="Janis">Janis</option>
+            <option value="Lou">Lou</option>
+            <option value="Maceo">Maceo</option>
+            <option value="Otis">Otis</option>
+            <option value="Patti">Patti</option>
+            <option value="Sly">Sly</option>
+            <option value="Thelonious">Thelonious</option>
+            <option value="Tina">Tina</option>
+            <option value="Wilson">Wilson</option>
+          </select>
+        </div>
+
+        <div class="groovaly-quote-field">
+          <label for="groovaly-quote-finish">Finish <span class="groovaly-quote-required">(required)</span></label>
+          <select id="groovaly-quote-finish" name="finish" required>
+            <option value="" disabled selected>Select a finish</option>
+            <option value="White Pearl">White Pearl</option>
+            <option value="Smooth lacquer">Smooth lacquer</option>
+            <option value="Hammered lacquer">Hammered lacquer</option>
+            <option value="Not sure yet">Not sure yet</option>
+          </select>
+          <p class="groovaly-quote-note">Lacquered pieces are typically around 25% above the White Pearl price.</p>
+        </div>
+
+        <div id="groovaly-quote-lacquer" hidden>
+          <div class="groovaly-quote-field">
+            <label for="groovaly-quote-sheen">Sheen</label>
+            <select id="groovaly-quote-sheen" name="sheen">
+              <option value="Not sure yet" selected>Not sure yet</option>
+              <option value="Matt">Matt</option>
+              <option value="Satin">Satin</option>
+              <option value="Gloss">Gloss</option>
+              <option value="Polished gloss">Polished gloss</option>
+            </select>
+          </div>
+
+          <div class="groovaly-quote-field">
+            <label for="groovaly-quote-colour">Colour</label>
+            <input type="text" id="groovaly-quote-colour" name="colour" placeholder="A RAL reference, or a description">
+          </div>
+        </div>
+
+        <div class="groovaly-quote-field">
+          <label for="groovaly-quote-body">Anything else we should know?</label>
+          <textarea id="groovaly-quote-body" name="message" rows="3"></textarea>
+        </div>
+
+        <input type="hidden" name="_subject" value="New Golden Age quote request">
+
+        <button type="submit" id="groovaly-quote-submit-btn" class="groovaly-quote-submit">Submit</button>
+      </form>
+    </div>
+
+    <div id="groovaly-quote-thanks-view" class="groovaly-quote-thanks" hidden>
+      <h3>Thank you, your request has been received.</h3>
+      <p>We'll get back to you shortly with a personalised quote.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .groovaly-quote-overlay {
+    position: fixed; inset: 0; z-index: 1000000;
+    background: rgba(0,0,0,0.45);
+    display: flex; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .groovaly-quote-overlay[hidden] { display: none; }
+  .groovaly-quote-modal {
+    position: relative;
+    background: #fff; border-radius: 10px;
+    max-width: 480px; width: 100%;
+    max-height: 90vh; overflow-y: auto;
+    padding: 32px 28px;
+  }
+  .groovaly-quote-close {
+    position: absolute; top: 10px; right: 14px;
+    background: none; border: none; font-size: 24px; line-height: 1;
+    cursor: pointer; color: #333;
+  }
+  .groovaly-quote-modal h3 { margin-top: 0; margin-bottom: 20px; }
+  .groovaly-quote-modal .groovaly-quote-intro { font-size: 13px; color: #555; margin: -10px 0 18px; line-height: 1.4; }
+  .groovaly-quote-field { margin-bottom: 14px; display: flex; flex-direction: column; gap: 4px; }
+  .groovaly-quote-field label { font-size: 13px; }
+  .groovaly-quote-field input,
+  .groovaly-quote-field select,
+  .groovaly-quote-field textarea {
+    padding: 8px 10px; border: 1px solid rgba(0,0,0,0.2); border-radius: 6px; font: inherit;
+  }
+  .groovaly-quote-required { color: #777; font-weight: normal; }
+  .groovaly-quote-country-note { font-size: 12px; color: #555; margin: 0 0 4px; line-height: 1.4; }
+  .groovaly-quote-inline-link { text-decoration: underline; color: inherit; }
+  .groovaly-quote-note { font-size: 12px; color: #555; margin: 2px 0 0; line-height: 1.4; }
+  #groovaly-quote-lacquer[hidden],
+  #groovaly-quote-composition-field[hidden] { display: none; }
+  .groovaly-quote-checkbox {
+    display: flex; align-items: center; gap: 8px; margin-bottom: 14px; font-size: 13px;
+  }
+  .groovaly-quote-checkbox input { width: auto; }
+  .groovaly-quote-submit {
+    margin-top: 8px; padding: 10px 18px; border: none; border-radius: 6px;
+    background: #111; color: #fff; cursor: pointer;
+  }
+  .groovaly-quote-submit:disabled { opacity: 0.6; cursor: default; }
+  .groovaly-quote-errors { color: #b00020; font-size: 13px; margin-bottom: 12px; }
+
+  .groovaly-quote-direct { text-align: center; margin: 26px 0 0; font-size: 14px; line-height: 1.6; }
+  .groovaly-quote-direct a { text-decoration: underline; }
+
+  .groovaly-configurator-embed { max-width: 1400px; margin: 0 auto; }
+  .groovaly-configurator-embed iframe { height: 860px; transition: height 0.15s ease; }
+  @media (max-width: 767px) {
+    .groovaly-configurator-embed iframe { height: 1100px; }
+  }
+</style>
+
+<script>
+(function () {
+  var BUILDER_ORIGIN = 'https://groovaly.github.io';
+  var FORM_ENDPOINT = 'https://formspree.io/f/mqerwngq';
+  var MAX_QUANTITY = 12;
+
+  var root = (window.Shopify && window.Shopify.routes && window.Shopify.routes.root) || '/';
+  var configuratorIframe = document.getElementById('groovaly-configurator-iframe');
+  var allowedVariants = {};
+
+  function safe(fn) { try { return fn(); } catch (_) {} }
+
+  function toBuilder(message) {
+    if (configuratorIframe && configuratorIframe.contentWindow) {
+      configuratorIframe.contentWindow.postMessage(message, BUILDER_ORIGIN);
+    }
+  }
+
+  {%- comment -%}
+    Live catalogue: price (in the visitor's market currency), variant id and
+    availability of every product the builder may add to the cart.
+  {%- endcomment -%}
+  function loadCatalog(handles) {
+    var products = {};
+    var requests = handles.map(function (handle) {
+      return fetch(root + 'products/' + encodeURIComponent(handle) + '.js', { headers: { Accept: 'application/json' } })
+        .then(function (res) { return res.ok ? res.json() : null; })
+        .then(function (product) {
+          if (!product || !product.variants || !product.variants.length) return;
+          var variant = product.variants.filter(function (v) { return v.available; })[0] || product.variants[0];
+          products[handle] = {
+            variantId: variant.id,
+            price: variant.price / 100,
+            available: Boolean(product.available && variant.available)
+          };
+          allowedVariants[variant.id] = true;
+        })
+        .catch(function () {});
+    });
+    return Promise.all(requests).then(function () {
+      var currency = (window.Shopify && window.Shopify.currency && window.Shopify.currency.active) || 'EUR';
+      var country = (window.Shopify && window.Shopify.country) || null;
+      return { country: country, currency: currency, deliverable: true, products: products };
+    });
+  }
+
+  function validItems(items) {
+    if (!Array.isArray(items) || items.length === 0 || items.length > 20) return false;
+    return items.every(function (item) {
+      return item && allowedVariants[item.id] && item.quantity >= 1 && item.quantity <= MAX_QUANTITY &&
+        (!item.properties || typeof item.properties === 'object');
+    });
+  }
+
+  function addToCart(requestId, items) {
+    if (!validItems(items)) {
+      toBuilder({ type: 'GROOVALY_SHOP_ADDED', requestId: requestId, ok: false, message: 'invalid items' });
+      return;
+    }
+    fetch(root + 'cart/add.js', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+      body: JSON.stringify({ items: items })
+    })
+      .then(function (res) {
+        return res.json().catch(function () { return {}; }).then(function (json) {
+          if (!res.ok) throw new Error(json.description || json.message || ('HTTP ' + res.status));
+        });
+      })
+      .then(function () {
+        toBuilder({ type: 'GROOVALY_SHOP_ADDED', requestId: requestId, ok: true });
+        window.location.href = root + 'cart';
+      })
+      .catch(function (error) {
+        toBuilder({ type: 'GROOVALY_SHOP_ADDED', requestId: requestId, ok: false, message: String(error && error.message || error) });
+      });
+  }
+
+  window.addEventListener('message', function (event) {
+    if (event.origin !== BUILDER_ORIGIN) return;
+    if (!configuratorIframe || event.source !== configuratorIframe.contentWindow) return;
+    var data = event.data || {};
+
+    if (data.type === 'GROOVALY_SHOP_HEIGHT' && typeof data.height === 'number' && data.height > 0) {
+      configuratorIframe.style.height = Math.ceil(data.height) + 'px';
+      return;
+    }
+    if (data.type === 'GROOVALY_SHOP_HELLO' && Array.isArray(data.handles)) {
+      loadCatalog(data.handles.slice(0, 40)).then(function (catalog) {
+        toBuilder({ type: 'GROOVALY_SHOP_CATALOG', catalog: catalog });
+      });
+      return;
+    }
+    if (data.type === 'GROOVALY_SHOP_ADD') {
+      addToCart(data.requestId, data.items);
+    }
+  });
+
+  {%- comment -%}
+    The theme wraps blocks in padded containers: let the builder reach the
+    section edges (unchanged from the previous version).
+  {%- endcomment -%}
+  function alignEmbedToSection() {
+    var embed = document.querySelector('.groovaly-configurator-embed');
+    if (!embed) return;
+    var totalLeft = 0, totalRight = 0;
+    var node = embed.parentElement;
+    while (node && node !== document.documentElement) {
+      var cs = getComputedStyle(node);
+      totalLeft += parseFloat(cs.paddingLeft) || 0;
+      totalRight += parseFloat(cs.paddingRight) || 0;
+      node = node.parentElement;
+    }
+    embed.style.maxWidth = 'none';
+    embed.style.width = 'calc(100% + ' + (totalLeft + totalRight) + 'px)';
+    embed.style.marginLeft = (-totalLeft) + 'px';
+    embed.style.marginRight = (-totalRight) + 'px';
+    var section = embed.closest('.shopify-section') || embed.parentElement;
+    var heading = section ? section.querySelector('h1, h2, h3') : null;
+    if (heading) {
+      var extra = heading.getBoundingClientRect().left - embed.getBoundingClientRect().left;
+      if (Math.abs(extra) > 1) {
+        embed.style.marginLeft = (-totalLeft + extra) + 'px';
+        embed.style.marginRight = (-totalRight - extra) + 'px';
+      }
+    }
+  }
+  window.addEventListener('load', function () { safe(alignEmbedToSection); });
+  window.addEventListener('resize', function () { safe(alignEmbedToSection); });
+
+  {%- comment -%} Quote request for lacquered finishes (unchanged form, no configurator data). {%- endcomment -%}
+  var overlay = document.getElementById('groovaly-quote-overlay');
+  var closeBtn = overlay.querySelector('.groovaly-quote-close');
+  var formView = document.getElementById('groovaly-quote-form-view');
+  var thanksView = document.getElementById('groovaly-quote-thanks-view');
+  var form = document.getElementById('groovaly-quote-form');
+  var submitBtn = document.getElementById('groovaly-quote-submit-btn');
+  var errorBox = document.getElementById('groovaly-quote-error');
+  var finishField = document.getElementById('groovaly-quote-finish');
+  var lacquerBox = document.getElementById('groovaly-quote-lacquer');
+  var directLink = document.getElementById('groovaly-quote-direct-link');
+
+  function openModal() { overlay.hidden = false; document.body.style.overflow = 'hidden'; }
+  function closeModal() { overlay.hidden = true; document.body.style.overflow = ''; }
+  function updateLacquerFields() {
+    if (!finishField || !lacquerBox) return;
+    var v = finishField.value;
+    lacquerBox.hidden = !(v === 'Smooth lacquer' || v === 'Hammered lacquer' || v === 'Not sure yet');
+  }
+  if (finishField) finishField.addEventListener('change', updateLacquerFields);
+  if (directLink) {
+    directLink.addEventListener('click', function (e) {
+      e.preventDefault();
+      formView.hidden = false; thanksView.hidden = true; errorBox.hidden = true;
+      updateLacquerFields();
+      openModal();
+    });
+  }
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    submitBtn.disabled = true;
+    errorBox.hidden = true;
+    fetch(FORM_ENDPOINT, { method: 'POST', headers: { Accept: 'application/json' }, body: new FormData(form) })
+      .then(function (res) {
+        submitBtn.disabled = false;
+        if (res.ok) {
+          formView.hidden = true; thanksView.hidden = false;
+          form.reset(); updateLacquerFields();
+        } else {
+          errorBox.hidden = false;
+        }
+      })
+      .catch(function () { submitBtn.disabled = false; errorBox.hidden = false; });
+  });
+  closeBtn.addEventListener('click', closeModal);
+  overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !overlay.hidden) closeModal(); });
+})();
+</script>

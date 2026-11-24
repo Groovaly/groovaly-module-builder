@@ -20,6 +20,7 @@ export default defineConfig({
       input: {
         main: 'index.html',
         cobra: 'cobra/index.html',
+        shop: 'shop/index.html',
       },
     },
   },

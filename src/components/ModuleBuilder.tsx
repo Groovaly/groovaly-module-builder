@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type CSSProperties, type MutableRefObject, type TouchEvent } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type MutableRefObject, type ReactNode, type TouchEvent } from 'react';
 import {
   DndContext,
   DragOverlay,
@@ -598,7 +598,12 @@ type ModuleBuilderProps = {
   showDebug?: boolean;
   embedMode?: boolean;
   /** 'cobra' hides the quote buttons: the seller page owns the order flow. */
-  variant?: 'public' | 'cobra';
+  variant?: 'public' | 'cobra' | 'shop';
+  /** Composition shown on first load (e.g. a default composition on the shop page). */
+  initialItems?: PlacedItem[];
+  initialAddFeet?: boolean;
+  /** Content shown right under the scene (e.g. price and call to action on the shop page). */
+  sceneFooter?: ReactNode;
   labels?: Partial<BuilderLabels>;
   onCompositionChange?: (snapshot: CompositionSnapshot) => void;
   controllerRef?: MutableRefObject<BuilderController | null>;
@@ -615,17 +620,20 @@ export function ModuleBuilder({
   onCompositionChange,
   controllerRef,
   tintHex = null,
+  initialItems,
+  initialAddFeet,
+  sceneFooter,
 }: ModuleBuilderProps): JSX.Element {
   const labels: BuilderLabels = { ...DEFAULT_LABELS, ...labelOverrides };
-  const showQuoteButtons = variant !== 'cobra';
-  const [placedItems, setPlacedItems] = useState<PlacedItem[]>([]);
+  const showQuoteButtons = variant === 'public';
+  const [placedItems, setPlacedItems] = useState<PlacedItem[]>(() => initialItems ?? []);
   const [activeDrag, setActiveDrag] = useState<ActiveDrag | null>(null);
   const [candidate, setCandidate] = useState<CandidatePlacement | null>(null);
   const [isGhostOutsideScene, setIsGhostOutsideScene] = useState(false);
   const [dismissGhost, setDismissGhost] = useState<(GhostRect & { moduleId: ModuleId; hires: boolean }) | null>(null);
   const [sceneWidth, setSceneWidth] = useState(0);
   const [dpr, setDpr] = useState(1);
-  const [addFeet, setAddFeet] = useState(false);
+  const [addFeet, setAddFeet] = useState(() => initialAddFeet ?? false);
   const [unitSystem, setUnitSystem] = useState<UnitSystem>('cm');
   const [quotePayload, setQuotePayload] = useState<QuotePayload | null>(null);
   const [isQuoteOpen, setIsQuoteOpen] = useState(false);
@@ -1368,6 +1376,7 @@ export function ModuleBuilder({
               {quotePayload ? <pre className="mb-preview-response">{JSON.stringify(quotePayload, null, 2)}</pre> : null}
             </div>
           ) : null}
+          {sceneFooter}
         </div>
 
         <aside className={`mb-side ${hasPlacedItems ? 'has-modules' : ''}`} aria-label="Modules panel">

@@ -1,0 +1,137 @@
+/* Golden Age shop builder — price bar, call to action and notes under the builder */
+
+.sb-app {
+  min-height: 0;
+}
+
+.sb-root {
+  font-family: 'Alegreya Sans Local', var(--gb-body-font);
+  color: #111;
+}
+
+.sb-bar {
+  width: 100%;
+  margin: 16px 0 0;
+  padding: 18px 0 0;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 380px);
+  gap: 24px;
+  align-items: start;
+}
+
+.sb-price {
+  margin: 0;
+  font-family: 'Libre Baskerville Local', var(--gb-heading-font), serif;
+  font-size: clamp(28px, 2.6vw, 38px);
+  line-height: 1.15;
+}
+
+.sb-summary {
+  margin: 6px 0 0;
+  font-size: 17px;
+}
+
+.sb-meta {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--gb-muted);
+}
+
+.sb-action {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+.sb-cta {
+  appearance: none;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  font: inherit;
+  font-size: 18px;
+  padding: 15px 22px;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.sb-cta:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.sb-error {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #a4161a;
+}
+
+.sb-zone {
+  background: #f4efe6;
+  padding: 14px 16px;
+}
+
+.sb-zone p {
+  margin: 0;
+}
+
+.sb-zone-title {
+  font-size: 16px;
+}
+
+.sb-zone-body {
+  margin-top: 4px !important;
+  font-size: 15px;
+  color: #333;
+}
+
+.sb-root .sb-zone-link {
+  display: inline-block;
+  margin-top: 8px;
+  color: #111;
+  text-decoration: underline;
+  font-size: 15px;
+}
+
+.sb-note {
+  width: 100%;
+  margin: 16px 0 0;
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+  background: #f4efe6;
+  padding: 14px 16px;
+}
+
+.sb-note-icon {
+  flex: 0 0 auto;
+  width: 22px;
+  height: 22px;
+  border: 1px solid #111;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Libre Baskerville Local', serif;
+  font-size: 13px;
+  font-style: italic;
+}
+
+.sb-note-title {
+  margin: 0;
+  font-size: 16px;
+}
+
+.sb-note-body {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: #333;
+}
+
+@media (max-width: 1100px) {
+  .sb-bar {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+}

@@ -22,6 +22,12 @@ The application has no database or application server. GitHub Pages hosts its bu
 
 Everything Groovaly may change lives in `src/cobra/config.ts`: password hash, Formspree endpoint, feet prices, lacquer coefficient, rounding, signature prices and notes. Pricing logic and tests are in `src/cobra/pricing.ts`. To change the password, run `npm run cobra:password -- "new password"` and paste the hash into `PASSWORD_SHA256`. The gate is client-side: it keeps the page away from the public but is not real security.
 
+## Golden Age shop builder (White Pearl, add to cart)
+
+`/shop/` ([groovaly.github.io/groovaly-module-builder/shop/](https://groovaly.github.io/groovaly-module-builder/shop/)) is the e-commerce builder for groovaly.com/collections/golden-age#create-your-own: White Pearl only, live price, and an "Add my composition to cart" button. A composition is priced as the sum of its modules plus one set of feet (€90); when its module counts match one of the 12 signature compositions, the signature product and its price are used instead (same rule as the quoting workbook). The default composition is Bloom + Grid (Tina). From two levels a wall-fixing note is shown; purchase is blocked outside the EU with a link to Bloom Console.
+
+The builder runs in an iframe, so it cannot reach the Shopify cart itself. The Custom Liquid block in `shopify/golden-age-builder.liquid` is the bridge: it reads live prices and variant ids with `/products/<handle>.js`, adds the lines with `/cart/add.js` (hidden line properties `_Composition ID`, `_Positions`, `_Layout`, `_Preview`) and opens the cart. Handles, delivery countries, default composition, vinyl capacities and copy live in `src/shop/config.ts`; pricing in `src/shop/shopPricing.ts`.
+
 ## Run locally
 
 Use Node.js 20, as in the Pages workflow:
