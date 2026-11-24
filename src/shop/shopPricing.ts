@@ -38,7 +38,8 @@ export type ShopQuote = {
   /** Every line has a purchasable Shopify product. */
   purchasable: boolean;
   weightKg: number;
-  capacity: number | null;
+  /** Estimated record capacity, null when the composition has none. */
+  capacity: { lp: number; singles: number } | null;
 };
 
 export type PlacedLike = { typeId: string; w: number; col: number; row: number };
@@ -70,11 +71,9 @@ export function quoteComposition(items: PlacedLike[], addFeet: boolean, catalog:
     });
   }
 
-  const capacityKeys = PRICE_KEYS.filter((key) => key !== 'feet' && counts[key] > 0);
-  const capacityKnown = capacityKeys.length > 0 && capacityKeys.every((key) => VINYL_CAPACITY[key] !== undefined);
-  const capacity = capacityKnown
-    ? capacityKeys.reduce((sum, key) => sum + counts[key] * (VINYL_CAPACITY[key] ?? 0), 0)
-    : null;
+  const lp = PRICE_KEYS.reduce((sum, key) => sum + counts[key] * (VINYL_CAPACITY[key]?.lp ?? 0), 0);
+  const singles = PRICE_KEYS.reduce((sum, key) => sum + counts[key] * (VINYL_CAPACITY[key]?.singles ?? 0), 0);
+  const capacity = lp > 0 || singles > 0 ? { lp, singles } : null;
 
   return {
     counts,

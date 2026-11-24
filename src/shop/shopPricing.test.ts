@@ -57,6 +57,12 @@ describe('shop builder pricing', () => {
     expect(lines.find((line) => line.id === catalog.products['golden-age-feet'].variantId)?.quantity).toBe(1);
   });
 
+  it('adds up the record capacity in LPs and 7-inch singles', () => {
+    const quote = quoteComposition([place('tilt', 0, 0, 2), place('chest', 2, 0, 2), place('bloom', 0, 1), place('grid', 1, 1)], false, null);
+    expect(quote.capacity).toEqual({ lp: 230, singles: 300 });
+    expect(quoteComposition([place('grid', 0, 0)], false, null).capacity).toBeNull();
+  });
+
   it('counts levels without the Nest platform', () => {
     expect(levels([place('tilt', 0, 0, 2), place('nest', 0, 1)])).toBe(1);
     expect(levels([place('tilt', 0, 0, 2), place('bloom', 0, 1), place('cub', 0, 2)])).toBe(3);

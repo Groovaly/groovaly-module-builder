@@ -604,6 +604,8 @@ type ModuleBuilderProps = {
   initialAddFeet?: boolean;
   /** Content shown right under the scene (e.g. price and call to action on the shop page). */
   sceneFooter?: ReactNode;
+  /** Content shown after the module palette. */
+  sideFooter?: ReactNode;
   labels?: Partial<BuilderLabels>;
   onCompositionChange?: (snapshot: CompositionSnapshot) => void;
   controllerRef?: MutableRefObject<BuilderController | null>;
@@ -623,6 +625,7 @@ export function ModuleBuilder({
   initialItems,
   initialAddFeet,
   sceneFooter,
+  sideFooter,
 }: ModuleBuilderProps): JSX.Element {
   const labels: BuilderLabels = { ...DEFAULT_LABELS, ...labelOverrides };
   const showQuoteButtons = variant === 'public';
@@ -1431,6 +1434,7 @@ export function ModuleBuilder({
               />
             ))}
           </div>
+          {sideFooter}
         </aside>
 
         <DragOverlay dropAnimation={null}>

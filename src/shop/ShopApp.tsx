@@ -156,6 +156,82 @@ export default function ShopApp(): JSX.Element {
     }
   };
 
+  const priceBlock = (
+    <div className="sb-price-block">
+      {hasModules ? (
+        <>
+          <p className="sb-price">{formatMoney(quote.total, currency)}</p>
+          <p className="sb-summary">{summary}</p>
+          {quote.capacity ? <p className="sb-meta">{COPY.capacity(quote.capacity.lp, quote.capacity.singles)}</p> : null}
+          <p className="sb-meta">{COPY.priceNote}</p>
+        </>
+      ) : (
+        <p className="sb-summary">{COPY.empty}</p>
+      )}
+    </div>
+  );
+
+  const action = (
+    <div className="sb-action">
+      {!deliverable ? (
+        <div className="sb-zone">
+          <p className="sb-zone-title">{COPY.outsideZoneTitle}</p>
+          <p className="sb-zone-body">{COPY.outsideZoneBody}</p>
+          <a className="sb-zone-link" href={OUTSIDE_ZONE_URL} target="_top">
+            {COPY.outsideZoneLink}
+          </a>
+        </div>
+      ) : (
+        <>
+          <button type="button" className="sb-cta" disabled={!canAdd} onClick={handleAdd}>
+            {status === 'adding' ? (
+              COPY.adding
+            ) : (
+              <>
+                {COPY.cta}
+                {hasModules ? <span className="sb-mobile-only"> · {formatMoney(quote.total, currency)}</span> : null}
+              </>
+            )}
+          </button>
+          {!embed ? <p className="sb-meta">{COPY.preview}</p> : null}
+          {embed && hasModules && catalog && !quote.purchasable ? <p className="sb-error">{COPY.unavailable}</p> : null}
+          {status === 'error' ? <p className="sb-error">{errorMessage}</p> : null}
+        </>
+      )}
+    </div>
+  );
+
+  const note = wallNote ? (
+    <aside className="sb-note" role="note">
+      <span className="sb-note-icon" aria-hidden="true">
+        i
+      </span>
+      <div>
+        <p className="sb-note-title">{wallNote.title}</p>
+        <p className="sb-note-body">{wallNote.body}</p>
+      </div>
+    </aside>
+  ) : null;
+
+  // Desktop: price, button and notes under the scene. Mobile: only the button
+  // between the scene and the palette, everything else after the palette.
+  const sceneFooter = (
+    <div className="sb-scene-footer" aria-live="polite">
+      <section className="sb-bar">
+        <div className="sb-desktop-only">{priceBlock}</div>
+        {action}
+      </section>
+      <div className="sb-desktop-only">{note}</div>
+    </div>
+  );
+
+  const sideFooter = (
+    <div className="sb-side-footer sb-mobile-only">
+      {priceBlock}
+      {note}
+    </div>
+  );
+
   return (
     <main className={`gb-app gb-app-fluid sb-app ${embed ? 'gb-app-embed' : ''}`} style={themeVars()}>
       <div ref={rootRef} className="sb-root">
@@ -169,58 +245,10 @@ export default function ShopApp(): JSX.Element {
             onCompositionChange={setSnapshot}
             initialItems={startEmpty ? [] : DEFAULT_COMPOSITION}
             initialAddFeet={startEmpty ? false : DEFAULT_FEET}
-            sceneFooter={<>
-        <section className="sb-bar" aria-live="polite">
-          <div className="sb-price-block">
-            {hasModules ? (
-              <>
-                <p className="sb-price">{formatMoney(quote.total, currency)}</p>
-                <p className="sb-summary">{summary}</p>
-                {quote.capacity ? <p className="sb-meta">{COPY.capacity(quote.capacity)}</p> : null}
-                <p className="sb-meta">{COPY.priceNote}</p>
-              </>
-            ) : (
-              <p className="sb-summary">{COPY.empty}</p>
-            )}
-          </div>
-
-          <div className="sb-action">
-            {!deliverable ? (
-              <div className="sb-zone">
-                <p className="sb-zone-title">{COPY.outsideZoneTitle}</p>
-                <p className="sb-zone-body">{COPY.outsideZoneBody}</p>
-                <a className="sb-zone-link" href={OUTSIDE_ZONE_URL} target="_top">
-                  {COPY.outsideZoneLink}
-                </a>
-              </div>
-            ) : (
-              <>
-                <button type="button" className="sb-cta" disabled={!canAdd} onClick={handleAdd}>
-                  {status === 'adding' ? COPY.adding : COPY.cta}
-                </button>
-                {!embed ? <p className="sb-meta">{COPY.preview}</p> : null}
-                {embed && hasModules && catalog && !quote.purchasable ? <p className="sb-error">{COPY.unavailable}</p> : null}
-                {status === 'error' ? <p className="sb-error">{errorMessage}</p> : null}
-              </>
-            )}
-          </div>
-        </section>
-
-        {wallNote ? (
-          <aside className="sb-note" role="note">
-            <span className="sb-note-icon" aria-hidden="true">
-              i
-            </span>
-            <div>
-              <p className="sb-note-title">{wallNote.title}</p>
-              <p className="sb-note-body">{wallNote.body}</p>
-            </div>
-          </aside>
-        ) : null}
-</>}
+            sceneFooter={sceneFooter}
+            sideFooter={sideFooter}
           />
         </section>
-
       </div>
     </main>
   );

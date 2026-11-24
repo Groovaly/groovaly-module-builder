@@ -135,3 +135,43 @@
     gap: 14px;
   }
 }
+
+/* Desktop / mobile split (the builder adds .is-mobile-layout on small screens) */
+.mb-builder:not(.is-mobile-layout) .sb-mobile-only {
+  display: none;
+}
+
+.mb-builder.is-mobile-layout .sb-desktop-only {
+  display: none;
+}
+
+.mb-builder.is-mobile-layout .sb-bar {
+  grid-template-columns: 1fr;
+  margin-top: 10px;
+  padding-top: 0;
+  border-top: none;
+  gap: 0;
+}
+
+.mb-builder.is-mobile-layout .sb-cta {
+  width: 100%;
+}
+
+/* Mobile: the palette follows the button closely */
+.mb-builder.is-mobile-layout.mb-variant-shop {
+  gap: 4px;
+}
+
+.mb-builder.is-mobile-layout.mb-variant-shop .mb-side {
+  padding-top: 6px;
+}
+
+.mb-builder.is-mobile-layout.mb-variant-shop .mb-side.has-modules .mb-side-head {
+  display: none;
+}
+
+.sb-side-footer {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(0, 0, 0, 0.15);
+}
