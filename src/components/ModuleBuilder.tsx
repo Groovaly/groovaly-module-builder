@@ -606,6 +606,8 @@ type ModuleBuilderProps = {
   sceneFooter?: ReactNode;
   /** Content shown after the module palette. */
   sideFooter?: ReactNode;
+  /** Short line shown on the scene, under the dimensions (e.g. record capacity). */
+  sceneNote?: string | null;
   labels?: Partial<BuilderLabels>;
   onCompositionChange?: (snapshot: CompositionSnapshot) => void;
   controllerRef?: MutableRefObject<BuilderController | null>;
@@ -626,6 +628,7 @@ export function ModuleBuilder({
   initialAddFeet,
   sceneFooter,
   sideFooter,
+  sceneNote,
 }: ModuleBuilderProps): JSX.Element {
   const labels: BuilderLabels = { ...DEFAULT_LABELS, ...labelOverrides };
   const showQuoteButtons = variant === 'public';
@@ -1300,6 +1303,7 @@ export function ModuleBuilder({
                 </button>
                 <div className="mb-right-overlay-controls">
                   {dimensions ? (
+                    <div className="mb-dimensions-stack">
                     <button
                       type="button"
                       className="mb-dimensions-toggle"
@@ -1315,6 +1319,8 @@ export function ModuleBuilder({
                       </span>
                       <span className="mb-dimensions-alt-unit">{unitSystem === 'cm' ? 'in' : 'cm'}</span>
                     </button>
+                    {sceneNote ? <span className="mb-scene-note">{sceneNote}</span> : null}
+                    </div>
                   ) : null}
                   <button
                     type="button"

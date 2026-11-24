@@ -72,13 +72,9 @@ export const COPY = {
   empty: 'Drag modules onto the grid to start your composition.',
   priceNote: 'Price includes VAT where applicable. Shipping is calculated at checkout.',
   signatureMatch: (name: string) => `This composition is our ${name} signature design.`,
-  compositionTitle: 'Your composition',
-  signatureLine: (name: string) => `${name} (signature composition)`,
-  dimensions: 'Dimensions (H × W × D)',
+  /** Shown on the grid, under the dimensions. */
   capacity: (lp: number, singles: number) =>
-    `Estimated capacity: up to ${[lp > 0 ? `${lp} LPs` : '', singles > 0 ? `${singles} 7-inch singles` : '']
-      .filter(Boolean)
-      .join(' and ')}`,
+    `Up to ${[lp > 0 ? `${lp} LPs` : '', singles > 0 ? `${singles} singles` : ''].filter(Boolean).join(' and ')}`,
   outsideZoneTitle: 'Golden Age ships within the European Union only.',
   outsideZoneBody: 'For delivery worldwide, discover Bloom Console.',
   outsideZoneLink: 'Discover Bloom Console',

@@ -815,6 +815,25 @@ body {
   gap: 16px;
 }
 
+.mb-dimensions-stack {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 4px;
+}
+
+.mb-scene-note {
+  font-family: 'Alegreya Sans Local', var(--gb-body-font);
+  font-size: 15px;
+  line-height: 1;
+  color: #111;
+  white-space: nowrap;
+}
+
+.mb-builder.is-mobile-layout .mb-scene-note {
+  font-size: 12px;
+}
+
 .mb-dimensions-toggle {
   border: 0;
   background: transparent;
