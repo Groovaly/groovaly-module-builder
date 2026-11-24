@@ -606,7 +606,7 @@ type ModuleBuilderProps = {
   sceneFooter?: ReactNode;
   /** Content shown after the module palette. */
   sideFooter?: ReactNode;
-  /** Short line shown on the scene, under the dimensions (e.g. record capacity). */
+  /** Short line shown on the scene, top right, on the wall (e.g. record capacity). */
   sceneNote?: string | null;
   labels?: Partial<BuilderLabels>;
   onCompositionChange?: (snapshot: CompositionSnapshot) => void;
@@ -1295,6 +1295,8 @@ export function ModuleBuilder({
               />
             ))}
 
+            {hasPlacedItems && sceneNote ? <span className="mb-scene-note">{sceneNote}</span> : null}
+
             {hasPlacedItems ? (
               <>
                 <button type="button" className="mb-reset-link mb-reset-link-overlay" onClick={resetBuilder}>
@@ -1303,7 +1305,6 @@ export function ModuleBuilder({
                 </button>
                 <div className="mb-right-overlay-controls">
                   {dimensions ? (
-                    <div className="mb-dimensions-stack">
                     <button
                       type="button"
                       className="mb-dimensions-toggle"
@@ -1319,8 +1320,6 @@ export function ModuleBuilder({
                       </span>
                       <span className="mb-dimensions-alt-unit">{unitSystem === 'cm' ? 'in' : 'cm'}</span>
                     </button>
-                    {sceneNote ? <span className="mb-scene-note">{sceneNote}</span> : null}
-                    </div>
                   ) : null}
                   <button
                     type="button"
