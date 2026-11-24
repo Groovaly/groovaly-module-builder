@@ -159,7 +159,8 @@ export default function ShopApp(): JSX.Element {
       setStatus('idle');
     } catch (error) {
       console.warn('[Groovaly shop builder] Add to cart failed', error);
-      setErrorMessage(COPY.error);
+      const detail = error instanceof Error ? error.message : String(error);
+      setErrorMessage(detail ? `${COPY.error} (${detail})` : COPY.error);
       setStatus('error');
     }
   };
