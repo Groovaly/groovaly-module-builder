@@ -32,6 +32,32 @@
   font-size: 17px;
 }
 
+.sb-list-title {
+  margin: 14px 0 4px;
+  font-size: 14px;
+  color: var(--gb-muted);
+}
+
+.sb-lines {
+  list-style: none;
+  margin: 0 0 8px;
+  padding: 0;
+  max-width: 420px;
+  font-size: 16px;
+}
+
+.sb-lines li {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 5px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.sb-lines li span:last-child {
+  white-space: nowrap;
+}
+
 .sb-meta {
   margin: 4px 0 0;
   font-size: 14px;

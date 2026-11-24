@@ -52,7 +52,7 @@ export const OUTSIDE_ZONE_URL = '/products/bloom-console';
  */
 export const VINYL_CAPACITY: Partial<Record<PriceKey, { lp?: number; singles?: number }>> = {
   cub: { lp: 80 },
-  lean: { lp: 100 },
+  lean: { lp: 80 },
   tilt: { lp: 180 },
   bloom: { lp: 50 },
   chest: { singles: 300 },
@@ -72,6 +72,9 @@ export const COPY = {
   empty: 'Drag modules onto the grid to start your composition.',
   priceNote: 'Price includes VAT where applicable. Shipping is calculated at checkout.',
   signatureMatch: (name: string) => `This composition is our ${name} signature design.`,
+  compositionTitle: 'Your composition',
+  signatureLine: (name: string) => `${name} (signature composition)`,
+  dimensions: 'Dimensions (H × W × D)',
   capacity: (lp: number, singles: number) =>
     `Estimated capacity: up to ${[lp > 0 ? `${lp} LPs` : '', singles > 0 ? `${singles} 7-inch singles` : '']
       .filter(Boolean)

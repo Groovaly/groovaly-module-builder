@@ -18,6 +18,7 @@ import {
   quoteComposition,
   type ShopCatalog,
 } from './shopPricing';
+import { readComposition, writeComposition } from './shopStorage';
 
 /*
  * Messages exchanged with the Shopify page (see shopify/golden-age-builder.liquid):
@@ -45,6 +46,10 @@ function themeVars(): CSSProperties {
   } as CSSProperties;
 }
 
+function inches(cm: number): string {
+  return (Math.round((cm / 2.54) * 10) / 10).toFixed(1);
+}
+
 function isEmbedded(): boolean {
   if (typeof window === 'undefined') return false;
   return new URLSearchParams(window.location.search).get('embed') === '1' && window.parent !== window;
@@ -56,9 +61,11 @@ export default function ShopApp(): JSX.Element {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const pendingRef = useRef<{ id: string; resolve: (result: { ok: boolean; message?: string }) => void } | null>(null);
 
+  // Composition kept from a previous visit; the default one on a first visit.
+  const initial = useMemo(() => readComposition() ?? { items: DEFAULT_COMPOSITION, addFeet: DEFAULT_FEET }, []);
   const [snapshot, setSnapshot] = useState<CompositionSnapshot>({
-    placedItems: DEFAULT_COMPOSITION,
-    addFeet: DEFAULT_FEET,
+    placedItems: initial.items,
+    addFeet: initial.addFeet,
     metrics: null,
   });
   const [catalog, setCatalog] = useState<ShopCatalog | null>(null);
@@ -103,7 +110,11 @@ export default function ShopApp(): JSX.Element {
     return () => observer.disconnect();
   }, [embed]);
 
-  const { placedItems, addFeet } = snapshot;
+  const { placedItems, addFeet, metrics } = snapshot;
+
+  useEffect(() => {
+    writeComposition({ items: placedItems, addFeet });
+  }, [placedItems, addFeet]);
   const quote = useMemo(() => quoteComposition(placedItems, addFeet, catalog), [placedItems, addFeet, catalog]);
   const currency = catalog?.currency ?? 'EUR';
   const hasModules = placedItems.length > 0;
@@ -144,6 +155,7 @@ export default function ShopApp(): JSX.Element {
       });
       const result = await requestAdd(items);
       if (!result.ok) throw new Error(result.message || 'cart');
+      writeComposition({ items: [], addFeet: false });
       // The page now opens the cart. Leave the builder empty, so going back
       // does not suggest the composition can still be edited.
       setStartEmpty(true);
@@ -161,7 +173,26 @@ export default function ShopApp(): JSX.Element {
       {hasModules ? (
         <>
           <p className="sb-price">{formatMoney(quote.total, currency)}</p>
-          <p className="sb-summary">{summary}</p>
+          {quote.signature ? <p className="sb-summary">{summary}</p> : null}
+          <p className="sb-list-title">
+            {COPY.compositionTitle} · {placedItems.length} module{placedItems.length > 1 ? 's' : ''}
+          </p>
+          <ul className="sb-lines">
+            {quote.lines.map((line) => (
+              <li key={line.handle}>
+                <span>
+                  {line.quantity} × {line.key === 'signature' ? COPY.signatureLine(line.label) : line.label}
+                </span>
+                <span>{formatMoney(line.subtotal, currency)}</span>
+              </li>
+            ))}
+          </ul>
+          {metrics ? (
+            <p className="sb-meta">
+              {COPY.dimensions}: {metrics.heightCm} × {metrics.widthCm} × {metrics.depthCm} cm ·{' '}
+              {inches(metrics.heightCm)} × {inches(metrics.widthCm)} × {inches(metrics.depthCm)} in
+            </p>
+          ) : null}
           {quote.capacity ? <p className="sb-meta">{COPY.capacity(quote.capacity.lp, quote.capacity.singles)}</p> : null}
           <p className="sb-meta">{COPY.priceNote}</p>
         </>
@@ -243,8 +274,8 @@ export default function ShopApp(): JSX.Element {
             showHeader={false}
             controllerRef={builderRef}
             onCompositionChange={setSnapshot}
-            initialItems={startEmpty ? [] : DEFAULT_COMPOSITION}
-            initialAddFeet={startEmpty ? false : DEFAULT_FEET}
+            initialItems={startEmpty ? [] : initial.items}
+            initialAddFeet={startEmpty ? false : initial.addFeet}
             sceneFooter={sceneFooter}
             sideFooter={sideFooter}
           />

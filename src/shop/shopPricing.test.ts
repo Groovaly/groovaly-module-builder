@@ -60,6 +60,7 @@ describe('shop builder pricing', () => {
   it('adds up the record capacity in LPs and 7-inch singles', () => {
     const quote = quoteComposition([place('tilt', 0, 0, 2), place('chest', 2, 0, 2), place('bloom', 0, 1), place('grid', 1, 1)], false, null);
     expect(quote.capacity).toEqual({ lp: 230, singles: 300 });
+    expect(quoteComposition([place('lean', 0, 0), place('cub', 1, 0)], false, null).capacity).toEqual({ lp: 160, singles: 0 });
     expect(quoteComposition([place('grid', 0, 0)], false, null).capacity).toBeNull();
   });
 
