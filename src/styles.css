@@ -829,6 +829,24 @@ body {
   pointer-events: none;
 }
 
+/* Wide screens: the capacity sits on the bottom line, after "Clear grid"
+   (inside the action bar); the top-right note is for smaller screens. */
+.mb-scene-note-inline {
+  margin-left: 40px;
+  font-family: 'Alegreya Sans Local', var(--gb-body-font);
+  font-size: 16px;
+  line-height: 1;
+  color: #111;
+  white-space: nowrap;
+  align-self: center;
+}
+
+@media (min-width: 1024px) {
+  .mb-builder:not(.is-mobile-layout) .mb-scene-note {
+    display: none;
+  }
+}
+
 .mb-builder.is-mobile-layout .mb-scene-note {
   top: 10px;
   right: 16px;

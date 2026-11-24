@@ -1357,6 +1357,7 @@ export function ModuleBuilder({
                     <img src={withBase('/images/icons/icon_reset.png')} alt="" aria-hidden="true" />
                     <span className="mb-reset-link-text">{labels.clearGrid}</span>
                   </button>
+                  {sceneNote ? <span className="mb-scene-note-inline">{sceneNote}</span> : null}
                 </div>
               </div>
             ) : null}
