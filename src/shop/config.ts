@@ -44,7 +44,8 @@ export const DELIVERABLE_COUNTRIES = [
 ]; // EU except Cyprus and Malta (not delivered)
 
 /** Product page suggested to visitors outside the delivery zone. */
-export const OUTSIDE_ZONE_URL = '/products/bloom-console';
+// Absolute: the builder runs in an iframe on github.io, so a relative link would open there.
+export const OUTSIDE_ZONE_URL = 'https://groovaly.com/products/bloom-console';
 
 /**
  * Approximate capacity per module: LPs (12-inch) and 7-inch singles.
